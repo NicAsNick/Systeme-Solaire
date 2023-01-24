@@ -5,12 +5,12 @@ Download [Node.js](https://nodejs.org/en/download/).
 Run this followed commands:
 
 ``` bash
-# Install dependencies (only the first time)
+# Installer les dependances du projet seulement la premiere fois
 npm install
 
-# Run the local server at localhost:8080
+# Lance le serveur de developpement sur localhost:8080
 npm run dev
 
-# Build for production in the dist/ directory
+# Build le projet pour la production
 npm run build
 ```

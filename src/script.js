@@ -37,6 +37,96 @@ const sizes = {
   height: window.innerHeight,
 };
 
+// Galaxy
+
+/* GALAXY */
+const parameters = {
+  count: 100000,
+  size: 0.01,
+  radius: 3,
+  spin: 7,
+  branche: 3,
+  randomness: 10,
+  randomnessPower: 1,
+  insideColor: "#ff28423",
+  outsideColor: "#8234FA",
+};
+
+let geometry = null;
+let material = null;
+let points = null;
+
+const generateGalaxy = () => {
+  if (points !== null) {
+    geometry.dispose();
+    material.dispose();
+    scene.remove(points);
+  }
+
+  geometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(parameters.count * 3);
+  const colors = new Float32Array(parameters.count * 3);
+
+  for (let i = 0; i < parameters.count; i++) {
+    const i3 = i * 3;
+
+    const radius = Math.random() * parameters.radius;
+    const spin = parameters.spin * radius;
+    const branchAngle =
+      ((i % parameters.branche) / parameters.branche) * Math.PI * 2;
+
+    const randomX =
+      Math.pow(Math.random(), parameters.randomnessPower) *
+      (Math.random() < 0.5 ? 1 : -1) *
+      parameters.randomness *
+      radius;
+    const randomY =
+      Math.pow(Math.random(), parameters.randomnessPower) *
+      (Math.random() < 0.5 ? 1 : -1) *
+      parameters.randomness *
+      radius;
+    const randomZ =
+      Math.pow(Math.random(), parameters.randomnessPower) *
+      (Math.random() < 0.5 ? 1 : -1) *
+      parameters.randomness *
+      radius;
+
+    positions[i3] = Math.cos(branchAngle + spin) * radius +randomX;
+    positions[i3 + 1] = randomY + 5;
+    positions[i3 + 2] = Math.sin(branchAngle + spin) * radius + randomZ;
+
+    /* COLORS */
+    const colorInside = new THREE.Color(parameters.insideColor);
+    const colorOutside = new THREE.Color(parameters.outsideColor);
+    const mixedColor = colorInside.clone();
+    mixedColor.lerp(colorOutside, radius / parameters.radius); // lerp permet de faire une interpolation entre deux couleurs
+
+    colors[i3] = mixedColor.r;
+    colors[i3 + 1] = mixedColor.g;
+    colors[i3 + 2] = mixedColor.b;
+  }
+
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+  /* MATERIAL */
+  material = new THREE.PointsMaterial({
+    size: parameters.size,
+    sizeAttenuation: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    vertexColors: true,
+  });
+
+  /* POINTS */
+  points = new THREE.Points(geometry, material);
+
+  /* SCENE */
+  scene.add(points);
+};
+
+generateGalaxy();
+
 // light
 const planetes = new Array();
 const Mercure = new THREE.PointLight(0xc0c0c0, 0.5);
@@ -49,7 +139,7 @@ const Neptune = new THREE.PointLight(0x87cefa, 0.2);
 
 const MOON = new THREE.PointLight("white", 7)
 
-planetes.push(Mercure, Venus, Mars, Jupiter, Saturne, Uranus, Neptune, MOON);
+planetes.push(Mercure, Venus, Mars, Jupiter, Saturne, Uranus, Neptune);
 
 planetes.forEach((planete) => {
     planete.position.y = 3
@@ -84,19 +174,20 @@ const clock = new THREE.Clock();
 const planeteRotation = (planete, timePassed, duree, distance) => {
   planete.position.x = Math.sin(Math.PI * timePassed * duree) * distance;
   planete.position.z = Math.cos(Math.PI * timePassed * duree ) * distance;
+  planete.position.y =  5;
 };
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime(); // Permet de récupérer le temps écoulé depuis le début de l'animation
   // update objects
 
-  planeteRotation(Mercure, elapsedTime, 1/88 * 1000, 3);
-  planeteRotation(Venus, elapsedTime, 1/225 * 1000, 4);
-  planeteRotation(Mars, elapsedTime, 1/685 * 1000, 5);
-  planeteRotation(Jupiter, elapsedTime, 1/4345 * 1000, 6);
-  planeteRotation(Saturne, elapsedTime, 1/10767 * 1000, 7);
-  planeteRotation(Uranus, elapsedTime, 1/30660 * 1000, 8);
-  planeteRotation(Neptune, elapsedTime, 1/59860 * 1000, 9);
+  planeteRotation(Mercure, elapsedTime, 1/88 * 100, 3);
+  planeteRotation(Venus, elapsedTime, 1/225 * 100, 4);
+  planeteRotation(Mars, elapsedTime, 1/685 * 100, 5);
+  planeteRotation(Jupiter, elapsedTime, 1/4345 * 100, 6);
+  planeteRotation(Saturne, elapsedTime, 1/10767 * 100, 7);
+  planeteRotation(Uranus, elapsedTime, 1/30660 * 100, 8);
+  planeteRotation(Neptune, elapsedTime, 1/59860 * 100, 9);
   
 
   // render
