@@ -17,7 +17,7 @@ const scene = new THREE.Scene();
 // Object
 const soleil = new THREE.Mesh(
   new THREE.SphereGeometry(),
-  new THREE.MeshStandardMaterial({ color: 0xFFC500 })
+  new THREE.MeshStandardMaterial({ color: 0xffc500 })
 );
 soleil.position.y = 5;
 scene.add(soleil);
@@ -41,15 +41,15 @@ const sizes = {
 
 /* GALAXY */
 const parameters = {
-  count: 100000,
+  count: 150000,
   size: 0.01,
   radius: 3,
   spin: 7,
   branche: 3,
   randomness: 10,
   randomnessPower: 1,
-  insideColor: "#ff28423",
-  outsideColor: "#8234FA",
+  insideColor: "white",
+  outsideColor: "purple",
 };
 
 let geometry = null;
@@ -75,23 +75,11 @@ const generateGalaxy = () => {
     const branchAngle =
       ((i % parameters.branche) / parameters.branche) * Math.PI * 2;
 
-    const randomX =
-      Math.pow(Math.random(), parameters.randomnessPower) *
-      (Math.random() < 0.5 ? 1 : -1) *
-      parameters.randomness *
-      radius;
-    const randomY =
-      Math.pow(Math.random(), parameters.randomnessPower) *
-      (Math.random() < 0.5 ? 1 : -1) *
-      parameters.randomness *
-      radius;
-    const randomZ =
-      Math.pow(Math.random(), parameters.randomnessPower) *
-      (Math.random() < 0.5 ? 1 : -1) *
-      parameters.randomness *
-      radius;
+    const randomX = Math.random() * 50 - 25
+    const randomY = Math.random() * 50 - 25
+    const randomZ = Math.random() * 50 - 25
 
-    positions[i3] = Math.cos(branchAngle + spin) * radius +randomX;
+    positions[i3] = Math.cos(branchAngle + spin) * radius + randomX;
     positions[i3 + 1] = randomY + 5;
     positions[i3 + 2] = Math.sin(branchAngle + spin) * radius + randomZ;
 
@@ -137,12 +125,64 @@ const Saturne = new THREE.PointLight(0xfdb813, 0.3);
 const Uranus = new THREE.PointLight(0x00ff7f, 0.25);
 const Neptune = new THREE.PointLight(0x87cefa, 0.2);
 
-const MOON = new THREE.PointLight("white", 7)
+const MOON = new THREE.PointLight("white", 7);
+
+// Planets material
+const planeteMaterial = new THREE.MeshStandardMaterial({
+  roughness: 0.5,
+  metalness: 0.5,
+});
+
+// Planets
+const planeteGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+
+const mercure = new THREE.Mesh(planeteGeometry, planeteMaterial);
+const venus = new THREE.Mesh(planeteGeometry, planeteMaterial);
+const mars = new THREE.Mesh(planeteGeometry, planeteMaterial);
+const jupiter = new THREE.Mesh(planeteGeometry, planeteMaterial);
+const saturne = new THREE.Mesh(planeteGeometry, planeteMaterial);
+const uranus = new THREE.Mesh(planeteGeometry, planeteMaterial);
+const neptune = new THREE.Mesh(planeteGeometry, planeteMaterial);
+
+// Planets position
 
 planetes.push(Mercure, Venus, Mars, Jupiter, Saturne, Uranus, Neptune);
+scene.add(mercure, venus, mars, jupiter, saturne, uranus, neptune);
+
+// Planets color
+mercure.material.color = new THREE.Color(0xc0c0c0);
+venus.material.color = new THREE.Color(0xffa500);
+mars.material.color = new THREE.Color(0xff4500);
+jupiter.material.color = new THREE.Color(0xf5a623);
+saturne.material.color = new THREE.Color(0xfdb813);
+uranus.material.color = new THREE.Color(0x00ff7f);
+neptune.material.color = new THREE.Color(0x87cefa);
+
+// Planètes size
+/* Mercure : 0,3871 UA
+Vénus : 0,7233 UA
+Terre : 1 UA
+Mars : 1,5237 UA
+Jupiter : 5,2028 UA
+Saturne : 9,5826 UA
+Uranus : 19,1818 UA
+Neptune : 30,0611 UA */
+
+/* mercure.scale.set(0.38, 0.38, 0.38);
+venus.scale.set(0.72, 0.72, 0.72);
+mars.scale.set(1.52, 1.52, 1.52);
+jupiter.scale.set(5.2, 5.2, 5.2);
+*/
+saturne.scale.set(4, 4, 4);
+
+uranus.scale.set(7.5, 7.5, 7.5);
+neptune.scale.set(30, 30, 30); 
+
+
+
 
 planetes.forEach((planete) => {
-    planete.position.y = 3
+  planete.position.y = 3;
   scene.add(planete, lightHelper(planete));
 });
 
@@ -173,21 +213,30 @@ const clock = new THREE.Clock();
 
 const planeteRotation = (planete, timePassed, duree, distance) => {
   planete.position.x = Math.sin(Math.PI * timePassed * duree) * distance;
-  planete.position.z = Math.cos(Math.PI * timePassed * duree ) * distance;
-  planete.position.y =  5;
+  planete.position.z = Math.cos(Math.PI * timePassed * duree) * distance;
+  planete.position.y = 5;
 };
 
 const tick = () => {
   const elapsedTime = clock.getElapsedTime(); // Permet de récupérer le temps écoulé depuis le début de l'animation
   // update objects
 
-  planeteRotation(Mercure, elapsedTime, 1/88 * 100, 3);
-  planeteRotation(Venus, elapsedTime, 1/225 * 100, 4);
-  planeteRotation(Mars, elapsedTime, 1/685 * 100, 5);
-  planeteRotation(Jupiter, elapsedTime, 1/4345 * 100, 6);
-  planeteRotation(Saturne, elapsedTime, 1/10767 * 100, 7);
-  planeteRotation(Uranus, elapsedTime, 1/30660 * 100, 8);
-  planeteRotation(Neptune, elapsedTime, 1/59860 * 100, 9);
+  planeteRotation(Mercure, elapsedTime, (1 / 88) * 100, 2);
+  planeteRotation(Venus, elapsedTime, (1 / 225) * 100, 4);
+  planeteRotation(Mars, elapsedTime, (1 / 685) * 100, 5);
+  planeteRotation(Jupiter, elapsedTime, (1 / 4345) * 100, 7);
+  planeteRotation(Saturne, elapsedTime, (1 / 10767) * 100, 18);
+  planeteRotation(Uranus, elapsedTime, (1 / 30660) * 100,  (25));
+  planeteRotation(Neptune, elapsedTime, (1 / 59860) * 100, (50));
+
+  /*  */
+  planeteRotation(mercure, elapsedTime, (1 / 88) * 100, 2);
+  planeteRotation(venus, elapsedTime, (1 / 225) * 100, 4);
+  planeteRotation(mars, elapsedTime, (1 / 685) * 100, 5);
+  planeteRotation(jupiter, elapsedTime, (1 / 4345) * 100, 7);
+  planeteRotation(saturne, elapsedTime, (1 / 10767) * 100, 18);
+  planeteRotation(uranus, elapsedTime, (1 / 30660) * 100, (25));
+  planeteRotation(neptune, elapsedTime, (1 / 59860) * 100, (50));
   
 
   // render
@@ -206,6 +255,24 @@ Jupiter : 4 343,5 jours -> 11,9
 Saturne : 10 767,5 jours -> 29.5
 Uranus : 30 660 jours -> 84
 Neptune : 59 860 jours -> 164
+
+Mercure : 57 909 030 km
+Vénus : 108 208 930 km
+Terre : 149 597 890 km
+Mars : 227 936 640 km
+Jupiter : 778 547 270 km
+Saturne : 1 427 048 030 km
+Uranus : 2 871 097 000 km
+Neptune : 4 498 252 780 km
+
+Mercure : 0,3871 UA
+Vénus : 0,7233 UA
+Terre : 1 UA
+Mars : 1,5237 UA
+Jupiter : 5,2028 UA
+Saturne : 9,5826 UA
+Uranus : 19,1818 UA
+Neptune : 30,0611 UA
 
 Plus la valeur est élevé moins il prends de temps sur la terre
 Mais sur le base de temps, plus le valeur de temps est élevé plus il va vite donc il faut inversé les valeurs
